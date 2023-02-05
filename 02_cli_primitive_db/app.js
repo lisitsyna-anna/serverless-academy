@@ -8,7 +8,7 @@ const dataBasePath = path.join(__dirname, 'data.txt');
   const users = await loadUsersFromDB();
 
   while (true) {
-    let answer = await askFirsQuestion();
+    let answer = await askFirstQuestion();
 
     if (answer.user !== '') {
       const detailInfo = await askDetailsQuestions();
@@ -48,7 +48,7 @@ async function loadUsersFromDB() {
   return usersDb;
 }
 
-async function askFirsQuestion() {
+async function askFirstQuestion() {
   return await inquirer.prompt([
     {
       type: 'input',
