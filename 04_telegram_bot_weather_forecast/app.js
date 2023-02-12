@@ -27,6 +27,7 @@ const buttons = {
       ],
       one_time_keyboard: true,
       resize_keyboard: true,
+      force_reply: true,
     }),
   },
   cityButton: {
@@ -34,6 +35,7 @@ const buttons = {
       keyboard: [[{ text: TEXT_FORCAST }]],
       one_time_keyboard: true,
       resize_keyboard: true,
+      force_reply: true,
     }),
   },
 };
