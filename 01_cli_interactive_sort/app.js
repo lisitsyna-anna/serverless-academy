@@ -7,15 +7,26 @@ const rl = readlinePromises.createInterface({
 
 (async () => {
   while (true) {
-    const answer = await rl.question('Enter 10 words or digits\n');
+    const answer = await rl.question(
+      'Enter 10 words or digits deviding them in spaces.\n(If you want to end the program, type exit) '
+    );
     let arrayOfAnswer = answer.trim().split(' ');
 
     if (answer.trim().toLowerCase() === 'exit') {
       rl.close();
       break;
     }
-
-    await showMenu(arrayOfAnswer);
+    if (arrayOfAnswer.length < 2) {
+      console.log('Please enter more than 2 items');
+      continue;
+    }
+    if (arrayOfAnswer.length > 10) {
+      console.log('Please enter no more than 10 items ');
+      continue;
+    }
+    if (arrayOfAnswer.length > 2) {
+      await showMenu(arrayOfAnswer);
+    }
   }
 })();
 
