@@ -17,14 +17,14 @@ const rl = readlinePromises.createInterface({
       break;
     }
     if (arrayOfAnswer.length < 2) {
-      console.log('Please enter more than 2 items');
+      console.log('Please enter more than 1 items');
       continue;
     }
     if (arrayOfAnswer.length > 10) {
       console.log('Please enter no more than 10 items ');
       continue;
     }
-    if (arrayOfAnswer.length > 2) {
+    if (arrayOfAnswer.length >= 2) {
       await showMenu(arrayOfAnswer);
     }
   }
