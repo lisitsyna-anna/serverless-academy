@@ -11,6 +11,6 @@ To run the program:
 
 5. run command in terminal:
 
-- node app m <Your message> - send message to Telegram Bot
-- node app p <path to image > - send image to Telegram Bot ( you can drag the
-  image from the folder "images")
+- node app m your message - send message to Telegram Bot
+- node app p path to image - send image to Telegram Bot ( you can drag the image
+  from the folder "images")
