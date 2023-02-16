@@ -1,3 +1,4 @@
 {"user":"anna","gender":"famale","age":"29"}
 {"user":"alex","gender":"male","age":"35"}
 {"user":"boris","gender":"male","age":"33"}
+{"user":"Kira","gender":"famale","age":"33"}

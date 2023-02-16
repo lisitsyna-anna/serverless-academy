@@ -11,7 +11,7 @@ const dataBasePath = path.join(__dirname, 'data.txt');
     if (answer.user !== '') {
       const detailInfo = await askDetailsQuestions();
       const user = { ...answer, ...detailInfo };
-      console.log('user', user);
+
       fs.appendFile(dataBasePath, `${JSON.stringify(user)}\n`, 'utf-8');
     } else {
       const { confirmation } = await askSearchQuestion();
