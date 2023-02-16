@@ -1,7 +1,5 @@
 const axios = require('axios');
-const cityName = 'Tel-Aviv';
-
-const API_KEY = 'a7a2ac74671f6f726e75c4196603a5ed';
+const { CITY_NAME, API_KEY } = require('./constants');
 
 async function getWeatherForecastByCity(cityName) {
   try {
@@ -15,7 +13,7 @@ async function getWeatherForecastByCity(cityName) {
 }
 
 async function getMessageArrayWithWeather(interval = 3) {
-  const listOfWeatherForcast = await getWeatherForecastByCity(cityName);
+  const listOfWeatherForcast = await getWeatherForecastByCity(CITY_NAME);
 
   let messageArray = [];
   let message = '';
@@ -53,7 +51,7 @@ async function getMessageArrayWithWeather(interval = 3) {
         messageArray.push(message);
       }
 
-      message = `Weather in ${cityName} on ${date}
+      message = `Weather in ${CITY_NAME} on ${date}
         \n⏰ Time: ${new Date(dt_txt).toLocaleTimeString()}.
         📝 Description: ${weather[0].description}.
         🌡️ Temperature: ${Math.round(temp)} Celcius.

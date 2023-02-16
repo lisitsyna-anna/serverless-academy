@@ -2,81 +2,52 @@ const axios = require('axios');
 const NodeCache = require('node-cache');
 const myCache = new NodeCache({ stdTTL: 120 });
 
-const CURRENCY_EUR = 'EUR';
-const CURRENCY_CODE_EUR = 978;
+const {
+  CURRENCY_USD,
+  CURRENCY_EUR,
+  CURRENCY_CODE_EUR,
+  CURRENCY_CODE_USD,
+  CURRENCY_CODE_UAH,
+} = require('./constants');
 
-const CURRENCY_USD = 'USD';
-const CURRENCY_CODE_USD = 840;
-
-const CURRENCY_UAH = 'UAH';
-const CURRENCY_CODE_UAH = 980;
 // Privat Bank
-// Exchange rates in cash from PrivatBank
-const getExchangeRatesInCashFromPrivat = async (currency = CURRENCY_USD) => {
+const getExchangeRatesFromPrivat = async (currency = CURRENCY_USD) => {
   try {
-    const { data } = await axios(
+    const { data: dataInCash } = await axios(
       'https://api.privatbank.ua/p24api/pubinfo?json&exchange&coursid=5'
     );
 
-    if (currency === CURRENCY_EUR) {
-      return data.filter(({ ccy }) => ccy === currency);
-    }
-
-    return data.filter(({ ccy }) => ccy === currency);
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-
-// Exchange rates in non-cash from PrivatBank
-const getExchangeRatesNonCashFromPrivat = async (currency = CURRENCY_USD) => {
-  try {
-    const { data } = await axios(
+    const { data: dataNonCash } = await axios(
       'https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11'
     );
-    if (currency === CURRENCY_EUR) {
-      return data.filter(({ ccy }) => ccy === currency);
-    }
 
-    return data.filter(({ ccy }) => ccy === currency);
+    const [cash] = dataInCash.filter(({ ccy }) => ccy === currency);
+    const [nonCash] = dataNonCash.filter(({ ccy }) => ccy === currency);
+
+    return { cash, nonCash };
   } catch (error) {
     console.log(error.message);
   }
 };
 
 const getMessageExchangeRatesFromPrivat = async (currency = CURRENCY_USD) => {
-  if (currency === CURRENCY_EUR) {
-    const [dataCurrencyInCash] = await getExchangeRatesInCashFromPrivat(
-      currency
-    );
-    const [dataCurrencyNonCash] = await getExchangeRatesNonCashFromPrivat(
-      currency
-    );
-    return `The EUR exchange rate in PrivatBank:\nIn cash (in bank branches):
-    💶 Buy: ${Number(dataCurrencyInCash.buy).toFixed(2)} UAH
-    💶 Sale: ${Number(dataCurrencyInCash.sale).toFixed(2)} UAH\nIn non-cash:
-    💶 Buy: ${Number(dataCurrencyNonCash.buy).toFixed(2)} UAH
-    💶 Sale: ${Number(dataCurrencyNonCash.sale).toFixed(2)} UAH
+  const { cash, nonCash } = await getExchangeRatesFromPrivat(currency);
+  let currencyIcon = CURRENCY_USD === currency ? '💵' : '💶';
+
+  return `The ${currency} exchange rate in PrivatBank:\nIn cash (in bank branches):
+    ${currencyIcon} Buy: ${Number(cash.buy).toFixed(2)} UAH
+    ${currencyIcon} Sale: ${Number(cash.sale).toFixed(2)} UAH\nIn non-cash:
+    ${currencyIcon} Buy: ${Number(nonCash.buy).toFixed(2)} UAH
+    ${currencyIcon} Sale: ${Number(nonCash.sale).toFixed(2)} UAH
     `;
-  }
-  const [dataCurrencyInCash] = await getExchangeRatesInCashFromPrivat();
-  const [dataCurrencyNonCash] = await getExchangeRatesNonCashFromPrivat();
-  return `The USD exchange rate in PrivatBank:\nIn cash (in bank branches):
-  💵 Buy: ${Number(dataCurrencyInCash.buy).toFixed(2)} UAH
-  💵 Sale: ${Number(dataCurrencyInCash.sale).toFixed(2)} UAH\nIn non-cash:
-  💵 Buy: ${Number(dataCurrencyNonCash.buy).toFixed(2)} UAH
-  💵 Sale: ${Number(dataCurrencyNonCash.sale).toFixed(2)} UAH
-  `;
 };
 
 // MonoBank
 const getExchangeRatesFromMono = async () => {
   try {
     if (myCache.has('dataFromMono')) {
-      console.log('Getting from cash');
       return myCache.get('dataFromMono');
     } else {
-      console.log('Getting from API');
       const { data } = await axios('https://api.monobank.ua/bank/currency');
       const dataWithUsdAndEur = data.filter(
         ({ currencyCodeA, currencyCodeB }) =>
@@ -93,24 +64,21 @@ const getExchangeRatesFromMono = async () => {
   }
 };
 
-const getMessageExchangeRatesFromMono = async (currency = CURRENCY_USD) => {
+const getMessageExchangeRatesFromMono = async (
+  currencyCode = CURRENCY_CODE_USD
+) => {
   const dataWithUsdAndEur = await getExchangeRatesFromMono();
-  if (currency === CURRENCY_EUR) {
-    const [currencyEur] = dataWithUsdAndEur.filter(
-      ({ currencyCodeA }) => currencyCodeA === CURRENCY_CODE_EUR
-    );
+  let currencyIcon = CURRENCY_CODE_USD === currencyCode ? '💵' : '💶';
 
-    return `The EUR exchange rate in MonoBank:
-    💶 Buy: ${currencyEur.rateBuy.toFixed(2)} UAH
-    💶 Sell: ${currencyEur.rateSell.toFixed(2)} UAH\n\n`;
-  }
-
-  const [currencyUsd] = dataWithUsdAndEur.filter(
-    ({ currencyCodeA }) => currencyCodeA === CURRENCY_CODE_USD
+  const [currencyData] = dataWithUsdAndEur.filter(
+    ({ currencyCodeA }) => currencyCodeA === currencyCode
   );
-  return `The USD exchange rate in MonoBank:
-   💵 Buy: ${currencyUsd.rateBuy.toFixed(2)} UAH
-   💵 Sell: ${currencyUsd.rateSell.toFixed(2)} UAH\n\n`;
+
+  return `The ${
+    currencyCode === CURRENCY_CODE_USD ? CURRENCY_USD : CURRENCY_EUR
+  } exchange rate in MonoBank:
+    ${currencyIcon} Buy: ${currencyData.rateBuy.toFixed(2)} UAH
+    ${currencyIcon} Sell: ${currencyData.rateSell.toFixed(2)} UAH\n\n`;
 };
 
 module.exports = {

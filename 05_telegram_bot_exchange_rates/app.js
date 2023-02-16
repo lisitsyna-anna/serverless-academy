@@ -4,18 +4,17 @@ const {
   getMessageExchangeRatesFromPrivat,
 } = require('./currencyAPI');
 const { getMessageArrayWithWeather } = require('./weatherAPI');
-
-const TOKEN_BOT = '6046633708:AAHTp-drqafLO-HFxybW5wNwnaz0FqSPlOY';
-
-const cityName = 'Tel-Aviv';
-
-const TEXT_INTERVAL_3_HOURS = 'At intervals of 3 hours';
-const TEXT_INTERVAL_6_HOURS = 'At intervals of 6 hours';
-const TEXT_FORCAST = `Weather forcast in ${cityName}`;
-const TEXT_EXCHANGE_RATES = 'Exchange rates';
-const CURRENCY_EUR = 'EUR';
-const CURRENCY_USD = 'USD';
-const TEXT_PREVIOUS_MENU = 'Previous menu';
+const {
+  TOKEN_BOT,
+  TEXT_INTERVAL_3_HOURS,
+  TEXT_INTERVAL_6_HOURS,
+  TEXT_FORCAST,
+  TEXT_EXCHANGE_RATES,
+  CURRENCY_EUR,
+  CURRENCY_USD,
+  CURRENCY_CODE_EUR,
+  TEXT_PREVIOUS_MENU,
+} = require('./constants');
 
 const bot = new TelegramBot(TOKEN_BOT, { polling: true });
 
@@ -40,7 +39,6 @@ const buttons = {
       force_reply: true,
     }),
   },
-
   currencyMenu: {
     reply_markup: JSON.stringify({
       keyboard: [
@@ -95,17 +93,16 @@ bot.on('message', async msg => {
       break;
 
     case CURRENCY_USD:
-      const messageFromPrivatUsd = await getMessageExchangeRatesFromPrivat();
       const messageFromMonoUsd = await getMessageExchangeRatesFromMono();
-
+      const messageFromPrivatUsd = await getMessageExchangeRatesFromPrivat();
       bot.sendMessage(chatId, messageFromMonoUsd + messageFromPrivatUsd);
       break;
 
     case CURRENCY_EUR:
-      const messageFromPrivatEur = await getMessageExchangeRatesFromPrivat(
-        CURRENCY_EUR
-      );
       const messageFromMonoEur = await getMessageExchangeRatesFromMono(
+        CURRENCY_CODE_EUR
+      );
+      const messageFromPrivatEur = await getMessageExchangeRatesFromPrivat(
         CURRENCY_EUR
       );
       bot.sendMessage(chatId, messageFromMonoEur + messageFromPrivatEur);
@@ -132,10 +129,8 @@ bot.on('message', async msg => {
 });
 
 async function sendMessagesWithWaether(chatId, interval = 3) {
-  let messageArray = await getMessageArrayWithWeather();
-  if (interval === 6) {
-    messageArray = await getMessageArrayWithWeather(6);
-  }
+  const messageArray = await getMessageArrayWithWeather(interval);
+
   for (let i = 0; i < messageArray.length; i += 1) {
     await bot.sendMessage(chatId, messageArray[i]);
   }
