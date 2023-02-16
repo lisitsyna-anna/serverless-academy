@@ -4,11 +4,11 @@ const TelegramBot = require('node-telegram-bot-api');
 const API_KEY = 'a7a2ac74671f6f726e75c4196603a5ed';
 const TOKEN_BOT = '6046633708:AAHTp-drqafLO-HFxybW5wNwnaz0FqSPlOY';
 
-const cityName = 'Tel-Aviv';
+const CITY_NAME = 'Tel-Aviv';
 
 const TEXT_INTERVAL_3_HOURS = 'At intervals of 3 hours';
 const TEXT_INTERVAL_6_HOURS = 'At intervals of 6 hours';
-const TEXT_FORCAST = `Weather forcast in ${cityName}`;
+const TEXT_FORCAST = `Weather forcast in ${CITY_NAME}`;
 
 const bot = new TelegramBot(TOKEN_BOT, { polling: true });
 
@@ -47,7 +47,7 @@ bot.on('message', async msg => {
     case '/start':
       bot.sendMessage(
         chatId,
-        `Hello!😉 If you want to know the weather forecast for ${cityName}, click the button below ⬇️`,
+        `Hello!😉 If you want to know the weather forecast for ${CITY_NAME}, click the button below ⬇️`,
         buttons.cityButton
       );
       break;
@@ -90,7 +90,7 @@ async function getWeatherForecastByCity(cityName) {
 }
 
 async function getMessageArrayWithWeather(interval = 3) {
-  const listOfWeatherForcast = await getWeatherForecastByCity(cityName);
+  const listOfWeatherForcast = await getWeatherForecastByCity(CITY_NAME);
 
   let messageArray = [];
   let message = '';
@@ -127,7 +127,7 @@ async function getMessageArrayWithWeather(interval = 3) {
         messageArray.push(message);
       }
 
-      message = `Weather in ${cityName} on ${date}
+      message = `Weather in ${CITY_NAME} on ${date}
       \n⏰ Time: ${new Date(dt_txt).toLocaleTimeString()}.
       📝 Description: ${weather[0].description}.
       🌡️ Temperature: ${Math.round(temp)} Celcius.
@@ -142,12 +142,7 @@ async function getMessageArrayWithWeather(interval = 3) {
 }
 
 async function sendMessagesWithWaether(chatId, interval = 3) {
-  let messageArray;
-
-  if (interval === 6) {
-    messageArray = await getMessageArrayWithWeather(6);
-  }
-  messageArray = await getMessageArrayWithWeather();
+  let messageArray = await getMessageArrayWithWeather(interval);
 
   for (let i = 0; i < messageArray.length; i += 1) {
     await bot.sendMessage(chatId, messageArray[i]);
