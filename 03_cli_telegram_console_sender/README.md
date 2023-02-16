@@ -4,7 +4,6 @@ To run the program:
 2. run command in terminal: npm install
 3. replace variables with your own values in app.js:
 
-- const token ='';
 - let chatId = '';
 
 4. open the bot via the link https://t.me/SkleroznikBot and run the bot
