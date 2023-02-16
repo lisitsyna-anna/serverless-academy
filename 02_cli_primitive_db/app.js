@@ -5,21 +5,21 @@ const inquirer = require('inquirer');
 const dataBasePath = path.join(__dirname, 'data.txt');
 
 (async () => {
-  const users = await loadUsersFromDB();
-
   while (true) {
     let answer = await askFirstQuestion();
 
     if (answer.user !== '') {
       const detailInfo = await askDetailsQuestions();
       const user = { ...answer, ...detailInfo };
-      users.push(user);
+      console.log('user', user);
+      fs.appendFile(dataBasePath, `${JSON.stringify(user)}\n`, 'utf-8');
     } else {
-      await fs.writeFile(dataBasePath, JSON.stringify(users), 'utf8');
       const { confirmation } = await askSearchQuestion();
 
       if (confirmation) {
         const { serchedUser } = await askSearchedUser();
+        const users = await loadUsersFromDB();
+
         let [result] = users.filter(
           ({ user }) =>
             user.toLowerCase().trim() === serchedUser.toLowerCase().trim()
@@ -37,15 +37,10 @@ const dataBasePath = path.join(__dirname, 'data.txt');
 
 async function loadUsersFromDB() {
   let usersTxt = await fs.readFile(dataBasePath, 'utf8');
-  let usersDb;
-
-  if (usersTxt.trim() === '') {
-    usersDb = [];
-  } else {
-    usersDb = JSON.parse(usersTxt);
-  }
-
-  return usersDb;
+  return usersTxt
+    .split('\n')
+    .filter(elem => elem !== '')
+    .map(elem => JSON.parse(elem));
 }
 
 async function askFirstQuestion() {

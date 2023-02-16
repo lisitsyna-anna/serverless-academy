@@ -1,1 +1,3 @@
-[{"user":"anna","gender":"famale","age":"25"},{"user":"alex","gender":"male","age":"35"},{"user":"vasa","gender":"male","age":"55"},{"user":"kira","gender":"male","age":"33"},{"user":"kristina","gender":"male","age":"33"},{"user":"fedor","gender":"famale","age":"33"},{"user":"rita ","gender":"male","age":"23"},{"user":"rikko","gender":"famale","age":"46"},{"user":"alexsandr","gender":"male","age":"34"}]
+{"user":"anna","gender":"famale","age":"29"}
+{"user":"alex","gender":"male","age":"35"}
+{"user":"boris","gender":"male","age":"33"}
