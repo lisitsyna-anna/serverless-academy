@@ -28,31 +28,19 @@ function getAmountOfUniqueValues() {
 }
 
 function getAmountOfValuesWhichExistInAllFiles() {
-  let userCounter = 0;
+  const amountOfUsersInAllFiels = Object.keys(usersData).filter(
+    user => usersData[user] === 20
+  ).length;
 
-  const users = Object.keys(usersData);
-
-  for (let user of users) {
-    if (usersData[user] === 20) {
-      userCounter += 1;
-    }
-  }
-
-  console.log(`Number of users existing in all fiels: ${userCounter}`);
+  console.log(`Number of users existing in all fiels: ${amountOfUsersInAllFiels}`);
 }
 
 function getAmountOfValuesWhichExistInAtLeastTenFiels() {
-  let userCounter = 0;
+  const amountOfUsersInAtLeastTenFiels = Object.keys(usersData).filter(
+    user => usersData[user] >= 10
+  ).length;
 
-  const users = Object.keys(usersData);
-
-  for (let user of users) {
-    if (usersData[user] >= 10) {
-      userCounter += 1;
-    }
-  }
-
-  console.log(`Number of users existing in at least 10 fiels: ${userCounter}`);
+  console.log(`Number of users existing in at least 10 fiels: ${amountOfUsersInAtLeastTenFiels}`);
 }
 
 function startProgramAndCheckPerformance() {
