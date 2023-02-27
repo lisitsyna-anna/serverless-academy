@@ -38,5 +38,5 @@ function transformData(dataArr) {
 }
 
 function writeDataToJson(data) {
-  fs.writeFileSync('newData.json', JSON.stringify(data));
+  fs.writeFileSync('newData.json', JSON.stringify(data, null, 2));
 }
